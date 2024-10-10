@@ -25,7 +25,11 @@
         >
           Add item
         </button>
-        <button class="btn btn-danger my-2" v-if="ownership">
+        <button
+          class="btn btn-danger my-2"
+          v-if="ownership"
+          @click="handleDeleteShop"
+        >
           Delete Shop
         </button>
 
@@ -169,6 +173,7 @@ import useDocument from "@/composables/useDocument";
 import useStorage from "@/composables/useStorage";
 import ListShopMenu from "@/components/ListShopMenu.vue";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   props: {
@@ -191,8 +196,10 @@ export default defineComponent({
       error: addItemError,
       isPending,
       updateDocument,
+      deleteDocument,
     } = useDocument("shops", props.id);
     const { url, uploadImg } = useStorage();
+    const router = useRouter();
 
     const ownership = computed(() => {
       return shop.value?.userId === user.value?.uid;
@@ -223,6 +230,11 @@ export default defineComponent({
       isPending.value = false;
     };
 
+    const handleDeleteShop = async function () {
+      await deleteDocument();
+      router.push({ name: "browseShops" });
+    };
+
     return {
       error,
       shop,
@@ -235,6 +247,7 @@ export default defineComponent({
       handleSubmit,
       addItemError,
       isPending,
+      handleDeleteShop,
     };
   },
 });

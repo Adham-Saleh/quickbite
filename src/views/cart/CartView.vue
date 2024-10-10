@@ -80,8 +80,24 @@
               <p class="fw-bolder">{{ subTotal - offer }}EGP</p>
             </div>
             <div class="col-12 d-flex justify-content-between w-100">
-              <button class="btn btn-success" @click="handleCheckout">
+              <button
+                class="btn btn-success"
+                @click="handleCheckout"
+                v-if="!cartPending"
+              >
                 checkout
+              </button>
+              <button
+                class="btn btn-success me-2"
+                type="button"
+                v-if="cartPending"
+                disabled
+              >
+                <span
+                  class="spinner-border spinner-border-sm"
+                  aria-hidden="true"
+                ></span>
+                <span role="status">Loading...</span>
               </button>
             </div>
           </div>
@@ -96,7 +112,7 @@ import { computed, defineComponent } from "vue";
 import getDocument from "@/composables/getDocument";
 import useDocument from "@/composables/useDocument";
 import useCollection from "@/composables/useCollection";
-import getCollection from "@/composables/getCollection";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   props: {
@@ -107,8 +123,8 @@ export default defineComponent({
   setup(props) {
     const { document } = getDocument("users", props.id);
     const { isPending, updateDocument } = useDocument("users", props.id);
-    const { documents } = getCollection("orders");
-    const { addDocuments } = useCollection();
+    const { isPending: cartPending, addDocuments } = useCollection();
+    const router = useRouter();
 
     const subTotal = computed(() =>
       document.value.cart.reduce(
@@ -132,9 +148,18 @@ export default defineComponent({
     };
 
     const handleCheckout = async function () {
-      console.log(document.value.userId);
-      console.log(document.value.cart);
-      console.log(documents.value);
+      const merchant = document.value.cart[0].merchantId;
+      cartPending.value = true;
+      await addDocuments("orders", {
+        merchantId: merchant,
+        clientId: document.value.userId,
+        order: document.value.cart,
+        orderStatus: "pending",
+        totalPrice: subTotal.value + offer.value
+      });
+      await updateDocument({ cart: [] });
+      cartPending.value = false;
+      router.push({ name: "orders" });
     };
 
     return {
@@ -144,6 +169,7 @@ export default defineComponent({
       handleItemDelete,
       isPending,
       handleCheckout,
+      cartPending,
     };
   },
 });

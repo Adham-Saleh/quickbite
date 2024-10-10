@@ -49,14 +49,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import getCollection from "@/composables/getCollection";
 
 export default defineComponent({
-  setup() {
-    const { error, documents: shops } = getCollection("shops");
-
-    return { error, shops };
-  },
+  props: ['shops']
 });
 </script>
 

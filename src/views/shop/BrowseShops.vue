@@ -54,7 +54,7 @@
 
       <!-- list shops -->
       <div class="col">
-        <ListShops />
+        <ListShops :shops="shops"/>
       </div>
     </div>
   </div>
@@ -63,9 +63,15 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import ListShops from "@/components/ListShops.vue";
+import getCollection from "@/composables/getCollection";
 
 export default defineComponent({
   components: { ListShops },
+  setup() {
+    const { error, documents: shops } = getCollection("shops");
+
+    return { error, shops };
+  },
 });
 </script>
 

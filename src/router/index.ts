@@ -8,15 +8,17 @@ import ShopDetails from "@/views/shop/ShopDetails.vue";
 import CartView from "@/views/cart/CartView.vue";
 
 import { projectAuth } from "@/firebase/config";
+import OrdersView from "@/views/orders/OrdersView.vue";
+import MyShop from "@/views/shop/MyShop.vue";
 
-const requireAuth = (to: any, from:any, next:any) => {
-  const user = projectAuth.currentUser
+const requireAuth = (to: any, from: any, next: any) => {
+  const user = projectAuth.currentUser;
   if (!user) {
-    next({ name: 'login' })
+    next({ name: "login" });
   } else {
-    next()
+    next();
   }
-}
+};
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -54,9 +56,23 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: requireAuth,
   },
   {
+    path: "/myshops",
+    name: "myShops",
+    component: MyShop,
+    props: true,
+    beforeEnter: requireAuth,
+  },
+  {
     path: "/cart/:id",
     name: "cart",
     component: CartView,
+    props: true,
+  },
+  {
+    path: "/orders",
+    name: "orders",
+    component: OrdersView,
+    beforeEnter: requireAuth,
     props: true,
   },
 ];

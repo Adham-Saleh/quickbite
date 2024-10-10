@@ -38,14 +38,29 @@
                 >
               </li>
               <li class="nav-item">
-                <router-link class="nav-link" :to="{ name: 'home' }"
+                <router-link class="nav-link" :to="{ name: 'myShops' }"
                   >My shops</router-link
                 >
               </li>
               <li class="nav-item">
-                <router-link class="nav-link" :to="{ name: 'cart', params: {id: userDocument[0].id} }" v-if="userDocument[0]"
+                <router-link class="nav-link" :to="{ name: 'orders' }">
+                  <span class="badge rounded-pill text-bg-primary">Orders</span>
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link
+                  class="nav-link"
+                  :to="{ name: 'cart', params: { id: userDocument[0].id } }"
+                  v-if="userDocument[0]"
+                >
+                  <span class="badge rounded-pill text-bg-primary"
+                    ><i class="bi bi-cart2"></i> Your cart
+                    {{
+                      userDocument[0].cart.length
+                        ? userDocument[0].cart.length
+                        : ""
+                    }}</span
                   >
-                  <span class="badge rounded-pill text-bg-primary"><i class="bi bi-cart2"></i> Your cart {{ userDocument[0].cart.length ? userDocument[0].cart.length : '' }}</span>
                 </router-link>
               </li>
               <li class="nav-item">
