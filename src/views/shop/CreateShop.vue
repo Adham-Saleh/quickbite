@@ -230,7 +230,7 @@ import getUser from "@/composables/getUser";
 import useStorage from "@/composables/useStorage";
 import { useRouter } from "vue-router";
 import { useForm, Field } from "vee-validate";
-import { string, object, number, mixed, boolean, ref as valRef, array } from "yup";
+import { string, object, number } from "yup";
 
 export default defineComponent({
   setup() {

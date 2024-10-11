@@ -87,12 +87,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent} from "vue";
 import useSignin from "@/composables/useSignin";
 import useCollection from "@/composables/useCollection";
 import { useRouter } from "vue-router";
 import { useForm } from "vee-validate";
-import { string, object, ref as valRef } from "yup";
+import { string, object } from "yup";
 
 export default defineComponent({
   setup() {

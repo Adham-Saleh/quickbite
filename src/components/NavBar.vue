@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent } from "vue";
 import getUser from "../composables/getUser";
 import useSingout from "../composables/useSignout";
 import { useRouter } from "vue-router";
@@ -117,7 +117,7 @@ import getCollection from "@/composables/getCollection";
 export default defineComponent({
   setup() {
     const { user } = getUser();
-    const { error, isPending, signout } = useSingout();
+    const { isPending, signout } = useSingout();
     const router = useRouter();
 
     const { documents } = getCollection("users");

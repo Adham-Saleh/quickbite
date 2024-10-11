@@ -185,7 +185,7 @@ import useStorage from "@/composables/useStorage";
 import ListShopMenu from "@/components/ListShopMenu.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { object, string, number, ref as valRef } from "yup";
+import { object, string, number } from "yup";
 import { useForm } from "vee-validate";
 
 export default defineComponent({

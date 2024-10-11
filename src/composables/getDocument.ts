@@ -2,7 +2,6 @@ import { projectFirestore } from "@/firebase/config";
 import {doc, onSnapshot } from "firebase/firestore";
 import { ref, watchEffect } from "vue";
 import Shop from "@/types/shop";
-import Cart from "@/types/cart";
 
 const getDocument = function (collectionName: string, id: string) {
   const error = ref<null | string>(null);

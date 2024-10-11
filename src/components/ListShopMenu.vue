@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { defineComponent } from "vue";
 import useDocument from "@/composables/useDocument";
 import getUser from "@/composables/getUser";
