@@ -15,8 +15,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="order in myMerchantOrders" :key="order.id">
-                <th scope="row">1</th>
+              <tr v-for="(order, idx) in myMerchantOrders" :key="order.id">
+                <th scope="row">{{idx + 1}}</th>
                 <td>{{ order.id }}</td>
                 <td>
                   <div class="dropdown">
@@ -115,8 +115,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="order in myClientOrders" :key="order.id">
-                <th scope="row">1</th>
+              <tr v-for="(order, idx) in myClientOrders" :key="order.id">
+                <th scope="row">{{idx + 1}}</th>
                 <td>{{ order.id }}</td>
                 <td>
                   <div class="dropdown">

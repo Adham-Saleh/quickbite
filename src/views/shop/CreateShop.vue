@@ -151,12 +151,13 @@
                 class="form-check-input"
                 type="checkbox"
                 id="flexCheckChecked"
+                v-model="terms"
               />
               <label class="form-check-label" for="flexCheckChecked">
                 <span>Terms and conditions</span>
               </label>
-              <div v-if="getError('terms')" class="text-danger">
-                {{ getError("terms") }}
+              <div v-if="termsError" class="text-danger">
+                You must accept terms to continue
               </div>
             </div>
             <button
@@ -235,6 +236,8 @@ import { string, object, number } from "yup";
 export default defineComponent({
   setup() {
     const logo = ref<FileList | string>("");
+    const terms = ref<boolean | null>(null);
+    const termsError = ref<boolean | null>(null);
 
     const shopDetailsSchema = object({
       title: string().required("Field is required"),
@@ -270,10 +273,18 @@ export default defineComponent({
 
     const submit = handleSubmit(async function () {
       if (!user.value) return;
+
+      termsError.value = false;
+
+      if (!terms.value) {
+        termsError.value = true;
+        return;
+      }
+
       isPending.value = true;
       if (logo.value) await uploadImg(logo);
       const newShop = await addDocuments("shops", {
-        coverUrl: url.value || '',
+        coverUrl: url.value || "",
         shopTitle: values.title,
         location: values.location,
         foodType: values.foodType,
@@ -320,7 +331,8 @@ export default defineComponent({
       opHoursFrom,
       opHoursTo,
       deliveryFees,
-
+      terms,
+      termsError,
       handleLogoFile,
       showPreview,
       submit,
@@ -328,7 +340,7 @@ export default defineComponent({
       isPending,
       getError,
       values,
-      Field
+      Field,
     };
   },
 });

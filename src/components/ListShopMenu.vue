@@ -98,8 +98,12 @@
         </div>
       </transition-group>
       <!-- ended -->
+      <div></div>
     </div>
   </div>
+  <!-- toast -->
+    <!-- add toast here -->
+  <!-- ended -->
 </template>
 
 <script>
@@ -157,7 +161,8 @@ export default defineComponent({
       );
       const targtedInput = document.getElementById(item.id);
       if (+targtedInput.value < 0) targtedInput.value = targtedInput.value * -1;
-      if (+targtedInput.value === 0) targtedInput.value = +targtedInput.value + 1;
+      if (+targtedInput.value === 0)
+        targtedInput.value = +targtedInput.value + 1;
       const newItem = {
         ...item,
         quantity: targtedInput.value,

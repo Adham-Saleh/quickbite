@@ -21,7 +21,11 @@
         tabindex="-1"
       >
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasExampleLabel">QuickBite</h5>
+          <h5 class="offcanvas-title" id="offcanvasExampleLabel">
+            <router-link :to="{ name: 'home' }" class="text-decoration-none text-dark"
+              >QuickBite</router-link
+            >
+          </h5>
           <button
             type="button"
             class="btn-close"
@@ -32,22 +36,22 @@
         <div class="offcanvas-body justify-content-end">
           <ul class="navbar-nav">
             <div class="d-block d-lg-flex align-items-center" v-if="user">
-              <li class="nav-item">
+              <li class="nav-item" data-bs-dismiss="offcanvas">
                 <router-link class="nav-link" :to="{ name: 'createShop' }"
                   >Create shop</router-link
                 >
               </li>
-              <li class="nav-item">
+              <li class="nav-item" data-bs-dismiss="offcanvas">
                 <router-link class="nav-link" :to="{ name: 'myShops' }"
                   >My shops</router-link
                 >
               </li>
-              <li class="nav-item">
+              <li class="nav-item" data-bs-dismiss="offcanvas">
                 <router-link class="nav-link" :to="{ name: 'orders' }">
                   <span class="badge rounded-pill text-bg-primary">Orders</span>
                 </router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" data-bs-dismiss="offcanvas">
                 <router-link
                   class="nav-link"
                   :to="{ name: 'cart', params: { id: userDocument[0].id } }"
@@ -63,7 +67,7 @@
                   >
                 </router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" data-bs-dismiss="offcanvas">
                 <button
                   @click="handleClick"
                   class="btn btn-danger btn-sm mt-2 mt-lg-0 ms-lg-3"
@@ -85,14 +89,14 @@
               </li>
             </div>
             <div class="d-block d-lg-flex align-items-center" v-if="!user">
-              <li class="nav-item me-2">
+              <li class="nav-item me-2" data-bs-dismiss="offcanvas">
                 <router-link
                   class="btn btn-sm btn-outline-secondary"
                   :to="{ name: 'signup' }"
                   >sing up</router-link
                 >
               </li>
-              <li class="nav-item mt-2 mt-lg-0">
+              <li class="nav-item mt-2 mt-lg-0" data-bs-dismiss="offcanvas">
                 <router-link
                   class="btn btn-sm btn-secondary"
                   :to="{ name: 'login' }"

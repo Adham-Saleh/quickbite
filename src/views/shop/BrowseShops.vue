@@ -38,15 +38,25 @@
 
                   <!-- food type -->
                   <div class="form-floating mt-2">
-                    <select name="" class="form-select" id="">
-                      <option value="fast food">Fast Food</option>
+                    <select
+                      name=""
+                      class="form-select"
+                      v-model="foodType"
+                      id=""
+                    >
+                      <option value="fastFood">Fast Food</option>
                       <option value="egyption">Egyption</option>
                       <option value="chinese">Chinese</option>
                       <option value="others">others</option>
                     </select>
                     <label for="">Food type</label>
                   </div>
-                  <button class="btn btn-sm btn-success mt-2" @click="filterByFoodType">Apply</button>
+                  <button
+                    class="btn btn-outline-secondary btn-sm mt-2"
+                    @click.prevent="handleClearFilters"
+                  >
+                    Clear
+                  </button>
                 </form>
               </div>
             </div>
@@ -77,12 +87,31 @@ export default defineComponent({
     const foodType = ref<string>("");
 
     let searchResults = computed(() => {
-      return shops.value.filter((shop: Shop) =>
-        shop.shopTitle.toLowerCase().includes(searchBar.value.toLowerCase())
-      );
+      return shops.value.filter((shop: Shop) => {
+        const matchesSearch = searchBar.value
+          ? shop.shopTitle.toLowerCase().includes(searchBar.value.toLowerCase())
+          : true;
+        const matchesFoodType = foodType.value
+          ? shop.foodType.toLowerCase() === foodType.value.toLowerCase()
+          : true;
+
+        return matchesSearch && matchesFoodType;
+      });
     });
 
-    return { error, shops, searchResults, searchBar };
+    const handleClearFilters = function () {
+      searchBar.value = "";
+      foodType.value = "";
+    };
+
+    return {
+      error,
+      shops,
+      searchResults,
+      searchBar,
+      foodType,
+      handleClearFilters,
+    };
   },
 });
 </script>

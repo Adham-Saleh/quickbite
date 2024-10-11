@@ -104,6 +104,7 @@
                 <span role="status">Loading...</span>
               </button>
             </div>
+            <span class="text-danger" v-if="checkoutError">cart is empty</span>
           </div>
         </div>
       </div>
@@ -117,6 +118,7 @@ import getDocument from "@/composables/getDocument";
 import useDocument from "@/composables/useDocument";
 import useCollection from "@/composables/useCollection";
 import { useRouter } from "vue-router";
+import { ref } from "vue";
 
 export default defineComponent({
   props: {
@@ -129,6 +131,7 @@ export default defineComponent({
     const { isPending, updateDocument } = useDocument("users", props.id);
     const { isPending: cartPending, addDocuments } = useCollection();
     const router = useRouter();
+    const checkoutError = ref(false);
 
     const subTotal = computed(() =>
       document.value.cart.reduce(
@@ -152,6 +155,11 @@ export default defineComponent({
     };
 
     const handleCheckout = async function () {
+      checkoutError.value = false;
+      if (!document.value.cart.length) {
+        checkoutError.value = true;
+        return;
+      }
       const merchant = document.value.cart[0].merchantId;
       cartPending.value = true;
       await addDocuments("orders", {
@@ -174,6 +182,7 @@ export default defineComponent({
       isPending,
       handleCheckout,
       cartPending,
+      checkoutError,
     };
   },
 });
