@@ -13,12 +13,16 @@ const signin = async function (
   error.value = null;
   isPending.value = true;
 
+  console.log(username, email, password)
+  debugger;
   try {
     const res = await createUserWithEmailAndPassword(
       projectAuth,
       email,
       password
     );
+
+    console.log(res)
 
     await updateProfile(res.user, { displayName: username });
     error.value = null;

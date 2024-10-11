@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <div class="row">
-      <div class="col-lg-3">
+      <div class="col-lg-3 mt-3">
         <div class="accordion" id="accordionExample">
           <div class="accordion-item">
             <h2 class="accordion-header">
@@ -31,6 +31,7 @@
                       id=""
                       class="form-control"
                       placeholder="Search by name"
+                      v-model="searchBar"
                     />
                     <label for="">Search by name</label>
                   </div>
@@ -45,6 +46,7 @@
                     </select>
                     <label for="">Food type</label>
                   </div>
+                  <button class="btn btn-sm btn-success mt-2" @click="filterByFoodType">Apply</button>
                 </form>
               </div>
             </div>
@@ -54,23 +56,33 @@
 
       <!-- list shops -->
       <div class="col">
-        <ListShops :shops="shops"/>
+        <ListShops :shops="searchResults" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import ListShops from "@/components/ListShops.vue";
 import getCollection from "@/composables/getCollection";
+import { ref } from "vue";
+import Shop from "@/types/shop";
 
 export default defineComponent({
   components: { ListShops },
   setup() {
     const { error, documents: shops } = getCollection("shops");
+    const searchBar = ref<string>("");
+    const foodType = ref<string>("");
 
-    return { error, shops };
+    let searchResults = computed(() => {
+      return shops.value.filter((shop: Shop) =>
+        shop.shopTitle.toLowerCase().includes(searchBar.value.toLowerCase())
+      );
+    });
+
+    return { error, shops, searchResults, searchBar };
   },
 });
 </script>

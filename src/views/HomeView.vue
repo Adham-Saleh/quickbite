@@ -30,8 +30,14 @@
   <div class="container">
     <ShopOptionsSection />
   </div>
-  <div class="container">
+  <div class="container" v-if="user">
     <MostSelling />
+  </div>
+  <div class="container text-center" v-else>
+    <hr class="mt-2">
+    <span>
+      <router-link :to="{name: 'login'}">Login</router-link> for instant ordering 
+    </span>
   </div>
 </template>
 
@@ -39,9 +45,15 @@
 import { defineComponent } from "vue";
 import ShopOptionsSection from "@/components/ShopOptionsSection.vue";
 import MostSelling from "@/components/MostSelling.vue";
+import getUser from "@/composables/getUser";
 
 export default defineComponent({
   name: "HomeView",
   components: { ShopOptionsSection, MostSelling },
+  setup() {
+    const {user} = getUser()
+
+    return {user}
+  }
 });
 </script>

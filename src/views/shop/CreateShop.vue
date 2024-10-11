@@ -5,7 +5,7 @@
         <div class="col-lg-5">
           <form
             class="form bg-light p-4 py-5 p-lg-5 rounded"
-            @submit.enter.prevent="handleSubmit"
+            @submit.enter.prevent="submit"
           >
             <div class="alert alert-danger" v-if="error">
               {{ error }}
@@ -20,9 +20,12 @@
                 class="form-control"
                 placeholder="e.g. Abo Saleh"
                 id="shop-title"
-                v-model="title"
+                v-bind="title"
               />
               <span class="input-group-text">?</span>
+            </div>
+            <div v-if="getError('title')" class="text-danger">
+              {{ getError("title") }}
             </div>
 
             <!-- shop logo -->
@@ -37,6 +40,9 @@
                 @change="handleLogoFile"
               />
             </div>
+            <div v-if="getError('logo')" class="text-danger">
+              {{ getError("logo") }}
+            </div>
 
             <!-- shop-location -->
             <label class="form-label mt-2" for="location">Location:</label>
@@ -47,15 +53,18 @@
                 class="form-control"
                 placeholder="e.g. Cairo, Damietta, .."
                 id="location"
-                v-model="location"
+                v-bind="location"
               />
               <span class="input-group-text">?</span>
+            </div>
+            <div v-if="getError('location')" class="text-danger">
+              {{ getError("location") }}
             </div>
 
             <!-- food-type -->
             <label class="form-label mt-2" for="type">Food Type:</label>
             <div class="input-group">
-              <select class="form-select" v-model="foodType" id="type">
+              <select class="form-select" v-bind="foodType" id="type">
                 <option value="fastFood">Fast Food</option>
                 <option value="egyption">Egyption</option>
                 <option value="italian">Italian</option>
@@ -63,6 +72,9 @@
                 <option value="others">Others</option>
               </select>
               <span class="input-group-text">?</span>
+            </div>
+            <div v-if="getError('foodType')" class="text-danger">
+              {{ getError("foodType") }}
             </div>
 
             <!-- phone-number -->
@@ -76,9 +88,12 @@
                 class="form-control"
                 placeholder="e.g. 01111111111"
                 id="number"
-                v-model="phoneNumber"
+                v-bind="phoneNumber"
               />
               <span class="input-group-text">?</span>
+            </div>
+            <div v-if="getError('phoneNumber')" class="text-danger">
+              {{ getError("phoneNumber") }}
             </div>
 
             <!-- Operating-Hours  -->
@@ -89,18 +104,24 @@
                   type="time"
                   class="form-control"
                   placeholder="From"
-                  v-model="opHoursFrom"
+                  v-bind="opHoursFrom"
                 />
                 <label for="">From</label>
+                <div v-if="getError('opHoursFrom')" class="text-danger">
+                  {{ getError("opHoursFrom") }}
+                </div>
               </div>
               <div class="form-floating">
                 <input
                   type="time"
                   class="form-control"
                   placeholder="To"
-                  v-model="opHoursTo"
+                  v-bind="opHoursTo"
                 />
                 <label for="">To</label>
+                <div v-if="getError('opHoursTo')" class="text-danger">
+                  {{ getError("opHoursTo") }}
+                </div>
               </div>
             </div>
 
@@ -115,25 +136,34 @@
                 class="form-control"
                 placeholder="e.g. 15L.E"
                 id="delivery-fees"
-                v-model="deliveryFees"
+                v-bind="deliveryFees"
               />
               <span class="input-group-text">L.E</span>
+            </div>
+            <div v-if="getError('deliveryFees')" class="text-danger">
+              {{ getError("deliveryFees") }}
             </div>
 
             <!-- terms and conditions -->
             <div class="form-check mt-2">
               <input
+                name="terms"
                 class="form-check-input"
                 type="checkbox"
-                value=""
                 id="flexCheckChecked"
-                v-model="terms"
               />
               <label class="form-check-label" for="flexCheckChecked">
                 <span>Terms and conditions</span>
               </label>
+              <div v-if="getError('terms')" class="text-danger">
+                {{ getError("terms") }}
+              </div>
             </div>
-            <button class="btn btn-success mt-4" v-if="!isPending">
+            <button
+              class="btn btn-success mt-4"
+              type="submit"
+              v-if="!isPending"
+            >
               Create Shop
             </button>
             <button
@@ -161,19 +191,19 @@
               alt="logo-cover"
             />
             <div class="card-body">
-              <h5 class="card-title">{{ title }}</h5>
+              <h5 class="card-title">{{ values.title }}</h5>
               <div class="card-text">
                 <div>
                   <span class="align-items-center">
                     <h6>
-                      {{ location }}
+                      {{ values.location }}
                       <span class="badge text-bg-danger m-0">{{
-                        foodType
+                        values.foodType
                       }}</span>
                     </h6>
                   </span>
                   <span class="text-muted"
-                    >{{ opHoursFrom }} - {{ opHoursTo }}</span
+                    >{{ values.opHoursFrom }} - {{ values.opHoursTo }}</span
                   >
                   <br />
                   <span class="align-items-center">
@@ -199,37 +229,58 @@ import { serverTimestamp } from "firebase/firestore";
 import getUser from "@/composables/getUser";
 import useStorage from "@/composables/useStorage";
 import { useRouter } from "vue-router";
+import { useForm, Field } from "vee-validate";
+import { string, object, number, mixed, boolean, ref as valRef, array } from "yup";
 
 export default defineComponent({
   setup() {
-    const title = ref<string>("");
     const logo = ref<FileList | string>("");
-    const location = ref<string>("");
-    const foodType = ref<string>("");
-    const phoneNumber = ref<string>("");
-    const opHoursFrom = ref<string>("");
-    const opHoursTo = ref<string>("");
-    const deliveryFees = ref<string>("");
-    const terms = ref<boolean>(false);
+
+    const shopDetailsSchema = object({
+      title: string().required("Field is required"),
+      location: string().required("Field is required"),
+      foodType: string().required("Field is required"),
+      phoneNumber: number()
+        .typeError("invalid phone number")
+        .required("Field is required")
+        .min(11, "please enter a valid egyption number"),
+      opHoursFrom: string().required("Field is required"),
+      opHoursTo: string().required("Field is required"),
+      deliveryFees: number()
+        .required("Field is required")
+        .typeError("invalid delivery fees"),
+    });
+
+    const { defineInputBinds, values, errorBag, handleSubmit } = useForm({
+      validationSchema: shopDetailsSchema,
+    });
+
+    const title = defineInputBinds("title");
+    const location = defineInputBinds("location");
+    const foodType = defineInputBinds("foodType");
+    const phoneNumber = defineInputBinds("phoneNumber");
+    const opHoursFrom = defineInputBinds("opHoursFrom");
+    const opHoursTo = defineInputBinds("opHoursTo");
+    const deliveryFees = defineInputBinds("deliveryFees");
 
     const { error, isPending, addDocuments } = useCollection();
     const { url, uploadImg } = useStorage();
     const { user } = getUser();
     const router = useRouter();
 
-    const handleSubmit = async function () {
+    const submit = handleSubmit(async function () {
       if (!user.value) return;
       isPending.value = true;
-      await uploadImg(logo);
+      if (logo.value) await uploadImg(logo);
       const newShop = await addDocuments("shops", {
-        coverUrl: url.value,
-        shopTitle: title.value,
-        location: location.value,
-        foodType: foodType.value,
-        phoneNumber: phoneNumber.value,
-        opHoursFrom: opHoursFrom.value,
-        opHoursTo: opHoursTo.value,
-        deliveryFees: deliveryFees.value,
+        coverUrl: url.value || '',
+        shopTitle: values.title,
+        location: values.location,
+        foodType: values.foodType,
+        phoneNumber: values.phoneNumber,
+        opHoursFrom: values.opHoursFrom,
+        opHoursTo: values.opHoursTo,
+        deliveryFees: values.deliveryFees,
         createdAt: serverTimestamp(),
         userId: user.value.uid,
         isOpened: true,
@@ -237,6 +288,11 @@ export default defineComponent({
       });
       isPending.value = false;
       router.push({ name: "shopDetails", params: { id: newShop?.id } });
+    });
+
+    const getError = function (name: string) {
+      const err = errorBag.value[name];
+      return err ? err[0] : false;
     };
 
     const handleLogoFile = function (e: any) {
@@ -245,11 +301,11 @@ export default defineComponent({
 
     const showPreview = function () {
       if (
-        title.value ||
-        location.value ||
-        foodType.value ||
-        opHoursFrom.value ||
-        opHoursTo.value
+        values.title ||
+        values.location ||
+        values.foodType ||
+        values.opHoursFrom ||
+        values.opHoursTo
       ) {
         return true;
       }
@@ -264,12 +320,15 @@ export default defineComponent({
       opHoursFrom,
       opHoursTo,
       deliveryFees,
-      terms,
+
       handleLogoFile,
       showPreview,
-      handleSubmit,
+      submit,
       error,
       isPending,
+      getError,
+      values,
+      Field
     };
   },
 });

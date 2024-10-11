@@ -1,10 +1,12 @@
 <template>
   <div class="container">
     <div class="row">
-      <!-- transition not working -->
-      <transition-group name="move-shops" appear>
+      <div v-if="!shops.length">
+        No shops available <router-link :to="{name: 'createShop'}">Create new shop</router-link>
+      </div>
+      <transition-group name="move-shops" appear v-else>
         <div
-          class="col-lg-4 col-md-6 mt-5 mt-lg-0 d-flex justify-content-center d-lg-block"
+          class="col-lg-4 col-md-6 mt-3 d-flex justify-content-center d-lg-block"
           v-for="shop in shops"
           :key="shop.id"
         >
@@ -14,7 +16,15 @@
           >
             <div class="card shadow" style="width: 18rem">
               <img
+                v-if="shop.coverUrl"
                 :src="shop.coverUrl"
+                class="card-img-top img-fluid"
+                style="min-height: 285px; max-height: 285px"
+                alt="logo-cover"
+              />
+              <img
+                v-else
+                src="../assets/6306486.jpg"
                 class="card-img-top img-fluid"
                 alt="logo-cover"
               />

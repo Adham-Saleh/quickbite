@@ -4,7 +4,7 @@
       <div class="col-lg-4">
         <form
           class="form bg-light p-4 p-lg-5 py-5 rounded"
-          @submit.enter.prevent="handleSubmit"
+          @submit.enter.prevent="submit"
         >
           <div class="alert alert-danger" v-if="error">
             {{ error }}
@@ -16,10 +16,13 @@
               class="form-control"
               id="floatingInput"
               placeholder="name@example.com"
-              v-model="email"
+              v-bind="email"
               required
             />
             <label for="floatingInput">Email address</label>
+            <div v-if="getError('email')" class="text-danger">
+              {{ getError("email") }}
+            </div>
           </div>
           <div class="form-floating">
             <input
@@ -27,10 +30,13 @@
               class="form-control"
               id="floatingPassword"
               placeholder="Password"
-              v-model="password"
+              v-bind="password"
               required
             />
             <label for="floatingPassword">Password</label>
+            <div v-if="getError('password')" class="text-danger">
+              {{ getError("password") }}
+            </div>
             <button
               class="btn btn-success mt-3 me-2"
               type="submit"
@@ -70,22 +76,38 @@
 import { defineComponent, ref } from "vue";
 import useLogin from "@/composables/useLogin";
 import { useRouter } from "vue-router";
+import { useForm } from "vee-validate";
+import { string, object, ref as valRef } from "yup";
 
 export default defineComponent({
   setup() {
-    const email = ref<string>("");
-    const password = ref<string>("");
     const router = useRouter();
-
     const { error, isPending, login } = useLogin();
 
-    const handleSubmit = async function () {
-      await login(email.value, password.value);
-      if (error.value) return;
-      router.push({ name: "home" });
+    const loginSchema = object({
+      email: string().required("Field is required"),
+      password: string().required("Field is required"),
+    });
+
+    const { defineInputBinds, values, errorBag, handleSubmit } = useForm({
+      validationSchema: loginSchema,
+    });
+
+    const email = defineInputBinds("email");
+    const password = defineInputBinds("password");
+
+    const getError = function (name: string) {
+      const err = errorBag.value[name];
+      return err ? err[0] : false;
     };
 
-    return { email, password, error, isPending, handleSubmit };
+    const submit = handleSubmit(async function () {
+      await login(values.email, values.password);
+      if (error.value) return;
+      router.push({ name: "home" });
+    });
+
+    return { email, password, error, isPending, submit, getError };
   },
 });
 </script>

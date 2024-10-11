@@ -5,7 +5,8 @@
         {{ error }}
       </div>
       <div v-if="!error && shop" class="col-lg-3">
-        <img :src="shop.coverUrl" class="img-fluid rounded" alt="shop-cover" />
+        <img v-if="shop.coverUrl" :src="shop.coverUrl" class="img-fluid rounded" alt="shop-cover" />
+        <img v-else src="../../assets/6306486.jpg" class="img-fluid rounded" alt="shop-cover" />
         <div class="shop-info">
           <span class="fw-bolder fs-1">{{ shop.shopTitle }}</span> <br />
           <span class="">Location: {{ shop.location }}</span> <br />
@@ -56,7 +57,7 @@
                 {{ addItemError }}
               </div>
               <div class="modal-body">
-                <form @submit.enter.prevent="handleSubmit">
+                <form @submit.enter.prevent="submit">
                   <div class="mb-3">
                     <label for="item-name" class="col-form-label"
                       >Item name:</label
@@ -65,9 +66,12 @@
                       type="text"
                       class="form-control"
                       id="item-name"
-                      v-model="itemTitle"
+                      v-bind="itemTitle"
                       required
                     />
+                    <div v-if="getError('itemTitle')" class="text-danger">
+                      {{ getError("itemTitle") }}
+                    </div>
                   </div>
                   <div class="mb-3">
                     <label for="item-pic" class="col-form-label"
@@ -89,10 +93,13 @@
                         type="text"
                         class="form-control"
                         id="item-price"
-                        v-model="itemPrice"
+                        v-bind="itemPrice"
                         required
                       />
                       <span class="input-group-text">L.E</span>
+                    </div>
+                    <div v-if="getError('itemPrice')" class="text-danger">
+                      {{ getError("itemPrice") }}
                     </div>
                   </div>
                   <div class="mb-3">
@@ -104,9 +111,12 @@
                         type="text"
                         class="form-control"
                         id="item-sale"
-                        v-model="itemSale"
+                        v-bind="itemSale"
                       />
                       <span class="input-group-text">L.E</span>
+                    </div>
+                    <div v-if="getError('itemSale')" class="text-danger">
+                      {{ getError("itemSale") }}
                     </div>
                   </div>
                   <div class="mb-3">
@@ -117,7 +127,7 @@
                       class="form-control"
                       id="description-text"
                       placeholder="add grasps of recipe"
-                      v-model="itemDescription"
+                      v-bind="itemDescription"
                       required
                     ></textarea>
                   </div>
@@ -133,7 +143,7 @@
                 </button>
                 <button
                   type="submit"
-                  @click="handleSubmit"
+                  @click="submit"
                   class="btn btn-primary"
                   v-if="!isPending"
                 >
@@ -159,6 +169,7 @@
 
       <!-- menu items -->
       <div class="col">
+        <h4 class="ms-2 mt-3 mt-lg-0 fw-bolder">Menu</h4>
         <ListShopMenu :shop="shop" :ownership="ownership" :id="id" />
       </div>
     </div>
@@ -174,6 +185,8 @@ import useStorage from "@/composables/useStorage";
 import ListShopMenu from "@/components/ListShopMenu.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { object, string, number, ref as valRef } from "yup";
+import { useForm } from "vee-validate";
 
 export default defineComponent({
   props: {
@@ -184,11 +197,39 @@ export default defineComponent({
   },
   components: { ListShopMenu },
   setup(props) {
-    const itemTitle = ref<string>("");
     const itemCover = ref<FileList | string>("");
-    const itemPrice = ref<string>("");
-    const itemSale = ref<string>("");
-    const itemDescription = ref<string>("");
+
+    const addItemsSchema = object({
+      itemTitle: string().required("Field required"),
+      itemPrice: number()
+        .required("Field required")
+        .min(1, "Item price must be a valid number"),
+      itemSale: number()
+        .min(0, "Item sale price must be a valid number")
+        .test(
+          "is-greater-or-equal",
+          "Sale price must be less than or equal to the item price",
+          function (value) {
+            if(!value) return true
+            const { itemPrice } = this.parent;
+            return value <= itemPrice;
+          }
+        ),
+    });
+
+    const { defineInputBinds, values, errorBag, handleSubmit } = useForm({
+      validationSchema: addItemsSchema,
+    });
+
+    const itemTitle = defineInputBinds("itemTitle");
+    const itemPrice = defineInputBinds("itemPrice");
+    const itemSale = defineInputBinds("itemSale");
+    const itemDescription = defineInputBinds("itemDescription");
+
+    const getError = function (name: string) {
+      const err = errorBag.value[name];
+      return err ? err[0] : false;
+    };
 
     const { error, document: shop } = getDocument("shops", props.id);
     const { user } = getUser();
@@ -209,17 +250,18 @@ export default defineComponent({
       itemCover.value = e.target.files[0];
     };
 
-    const handleSubmit = async function () {
+    const submit = handleSubmit(async function () {
+      console.log(values)
       isPending.value = true;
 
-      await uploadImg(itemCover);
+      if (itemCover.value) await uploadImg(itemCover);
 
       const newMenuItem = {
-        title: itemTitle.value,
-        coverUrl: url.value,
-        price: itemPrice.value,
-        sale: itemSale.value,
-        description: itemDescription.value,
+        title: values.itemTitle,
+        coverUrl: url.value || '',
+        price: values.itemPrice,
+        sale: values.itemSale || '',
+        description: values.itemDescription || '',
         id: Math.floor(Math.random() * 1000000),
       };
 
@@ -228,7 +270,7 @@ export default defineComponent({
       }
 
       isPending.value = false;
-    };
+    });
 
     const handleDeleteShop = async function () {
       await deleteDocument();
@@ -244,10 +286,11 @@ export default defineComponent({
       itemSale,
       itemDescription,
       handleChange,
-      handleSubmit,
+      submit,
       addItemError,
       isPending,
       handleDeleteShop,
+      getError,
     };
   },
 });

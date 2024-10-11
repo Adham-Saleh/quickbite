@@ -17,44 +17,48 @@
               >browse shops now</router-link
             >
           </div>
-          <div class="row" v-for="item in document.cart" :key="item.id">
-            <div class="card mb-3 p-0" style="max-width: 540px">
-              <div class="row g-0">
-                <div class="col-md-4">
-                  <img
-                    :src="item.coverUrl"
-                    class="img-thumbnail rounded-start"
-                    alt="..."
-                  />
-                </div>
-                <div class="col-md-8">
-                  <div class="card-body">
-                    <h5
-                      class="card-title fw-bolder d-flex justify-content-between align-items-center"
-                    >
-                      <span>{{ item.title }}</span>
-                      <span
-                        ><button
-                          class="btn btn-danger"
-                          v-if="!isPending"
-                          @click="handleItemDelete(item.id)"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </span>
-                    </h5>
-                    <p class="card-text">
-                      {{ item.description }}
-                    </p>
-                    <p>
-                      <span>Price: {{ item.price }}EGP - </span>
-                      <span>Quantity: {{ item.quantity }}</span>
-                    </p>
+          <!-- cart items -->
+          <transition-group name="cart-items">
+            <div class="row" v-for="item in document.cart" :key="item.id">
+              <div class="card mb-3 p-0" style="max-width: 540px">
+                <div class="row g-0">
+                  <div class="col-md-4">
+                    <img
+                      :src="item.coverUrl"
+                      class="img-thumbnail rounded-start"
+                      alt="..."
+                    />
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <h5
+                        class="card-title fw-bolder d-flex justify-content-between align-items-center"
+                      >
+                        <span>{{ item.title }}</span>
+                        <span
+                          ><button
+                            class="btn btn-danger"
+                            v-if="!isPending"
+                            @click="handleItemDelete(item.id)"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </span>
+                      </h5>
+                      <p class="card-text">
+                        {{ item.description }}
+                      </p>
+                      <p>
+                        <span>Price: {{ item.price }}EGP - </span>
+                        <span>Quantity: {{ item.quantity }}</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </transition-group>
+          <!-- ended -->
         </div>
       </div>
       <div class="col">
@@ -155,7 +159,7 @@ export default defineComponent({
         clientId: document.value.userId,
         order: document.value.cart,
         orderStatus: "pending",
-        totalPrice: subTotal.value + offer.value
+        totalPrice: subTotal.value + offer.value,
       });
       await updateDocument({ cart: [] });
       cartPending.value = false;
@@ -175,4 +179,27 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style>
+.cart-items-enter-from,
+.cart-items-leave-to {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.cart-items-enter-to,
+.cart-items-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+.cart-items-enter-active {
+  transition: all 0.3s ease;
+}
+
+.cart-items-leave-active {
+  position: absolute;
+  z-index: -1;
+}
+
+.cart-items-move {
+  transition: all 0.3s ease;
+}
+</style>
