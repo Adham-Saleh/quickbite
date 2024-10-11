@@ -120,7 +120,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const itemAmount = ref(1);
     const { isPending, updateDocument } = useDocument("shops", props.id);
     const { documents } = getCollection("users");
     const { user } = getUser();
@@ -156,7 +155,6 @@ export default defineComponent({
     };
 
     return {
-      itemAmount,
       increment,
       decrement,
       handleDelete,

@@ -12,7 +12,11 @@
           late-night snack, we deliver your cravings—fast and fresh, every time.
           Quick, tasty, and reliable—because your hunger can't wait!
         </p>
-        <router-link :to="{name: 'browseShops'}" class="btn btn-success btn-lg">Start ordering now!</router-link>
+        <router-link
+          :to="{ name: 'browseShops' }"
+          class="btn btn-success btn-lg"
+          >Start ordering now!</router-link
+        >
       </div>
       <div class="col-5">
         <img
@@ -23,12 +27,21 @@
       </div>
     </div>
   </div>
+  <div class="container">
+    <ShopOptionsSection />
+  </div>
+  <div class="container">
+    <MostSelling />
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import ShopOptionsSection from "@/components/ShopOptionsSection.vue";
+import MostSelling from "@/components/MostSelling.vue";
 
 export default defineComponent({
   name: "HomeView",
+  components: { ShopOptionsSection, MostSelling },
 });
 </script>

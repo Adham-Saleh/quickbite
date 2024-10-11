@@ -1,159 +1,159 @@
 <template>
   <div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-lg-5">
-        <form
-          class="form bg-light p-4 py-5 p-lg-5 rounded"
-          @submit.enter.prevent="handleSubmit"
-        >
-          <div class="alert alert-danger" v-if="error">
-            {{ error }}
-          </div>
-          <h3>Create new shop</h3>
-          <!-- shop-title -->
-          <label class="form-label" for="shop-title">Shop title:</label>
-          <div class="input-group">
-            <span class="input-group-text">@</span>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="e.g. Abo Saleh"
-              id="shop-title"
-              v-model="title"
-            />
-            <span class="input-group-text">?</span>
-          </div>
-
-          <!-- shop logo -->
-          <label class="form-label mt-2" for="logo">logo cover:</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-image"></i></span>
-            <input
-              type="file"
-              class="form-control"
-              placeholder="e.g. 15L.E"
-              id="logo"
-              @change="handleLogoFile"
-            />
-          </div>
-
-          <!-- shop-location -->
-          <label class="form-label mt-2" for="location">Location:</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-geo"></i></span>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="e.g. Cairo, Damietta, .."
-              id="location"
-              v-model="location"
-            />
-            <span class="input-group-text">?</span>
-          </div>
-
-          <!-- food-type -->
-          <label class="form-label mt-2" for="type">Food Type:</label>
-          <div class="input-group">
-            <select class="form-select" v-model="foodType" id="type">
-              <option value="fastFood">Fast Food</option>
-              <option value="egyption">Egyption</option>
-              <option value="italian">Italian</option>
-              <option value="chinese">Chinese</option>
-              <option value="others">Others</option>
-            </select>
-            <span class="input-group-text">?</span>
-          </div>
-
-          <!-- phone-number -->
-          <label class="form-label mt-2" for="number">Phone number:</label>
-          <div class="input-group">
-            <span class="input-group-text"
-              ><i class="bi bi-telephone"></i
-            ></span>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="e.g. 01111111111"
-              id="number"
-              v-model="phoneNumber"
-            />
-            <span class="input-group-text">?</span>
-          </div>
-
-          <!-- Operating-Hours  -->
-          <label class="form-label mt-2">Operating Hours:</label>
-          <div class="d-flex justify-content-around">
-            <div class="form-floating">
-              <input
-                type="time"
-                class="form-control"
-                placeholder="From"
-                v-model="opHoursFrom"
-              />
-              <label for="">From</label>
-            </div>
-            <div class="form-floating">
-              <input
-                type="time"
-                class="form-control"
-                placeholder="To"
-                v-model="opHoursTo"
-              />
-              <label for="">To</label>
-            </div>
-          </div>
-
-          <!-- Delivery fees -->
-          <label class="form-label mt-2" for="delivery-fees"
-            >Delivery fees:</label
+      <transition-group name="move-items" appear>
+        <div class="col-lg-5">
+          <form
+            class="form bg-light p-4 py-5 p-lg-5 rounded"
+            @submit.enter.prevent="handleSubmit"
           >
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-cash"></i></span>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="e.g. 15L.E"
-              id="delivery-fees"
-              v-model="deliveryFees"
-            />
-            <span class="input-group-text">L.E</span>
-          </div>
+            <div class="alert alert-danger" v-if="error">
+              {{ error }}
+            </div>
+            <h3>Create new shop</h3>
+            <!-- shop-title -->
+            <label class="form-label" for="shop-title">Shop title:</label>
+            <div class="input-group">
+              <span class="input-group-text">@</span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="e.g. Abo Saleh"
+                id="shop-title"
+                v-model="title"
+              />
+              <span class="input-group-text">?</span>
+            </div>
 
-          <!-- terms and conditions -->
-          <div class="form-check mt-2">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              value=""
-              id="flexCheckChecked"
-              v-model="terms"
-            />
-            <label class="form-check-label" for="flexCheckChecked">
-              <span>Terms and conditions</span>
-            </label>
-          </div>
-          <button class="btn btn-success mt-4" v-if="!isPending">
-            Create Shop
-          </button>
-          <button
-            class="btn btn-success mt-3 me-2"
-            type="button"
-            v-if="isPending"
-            disabled
-          >
-            <span
-              class="spinner-border spinner-border-sm"
-              aria-hidden="true"
-            ></span>
-            <span role="status">Loading...</span>
-          </button>
-        </form>
-      </div>
+            <!-- shop logo -->
+            <label class="form-label mt-2" for="logo">logo cover:</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-image"></i></span>
+              <input
+                type="file"
+                class="form-control"
+                placeholder="e.g. 15L.E"
+                id="logo"
+                @change="handleLogoFile"
+              />
+            </div>
 
-      <!-- Demo -->
-      <div class="col-lg-5" v-if="showPreview()">
-        <h3>See how will your shop look like!</h3>
-        <transition name="card-list">
+            <!-- shop-location -->
+            <label class="form-label mt-2" for="location">Location:</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-geo"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="e.g. Cairo, Damietta, .."
+                id="location"
+                v-model="location"
+              />
+              <span class="input-group-text">?</span>
+            </div>
+
+            <!-- food-type -->
+            <label class="form-label mt-2" for="type">Food Type:</label>
+            <div class="input-group">
+              <select class="form-select" v-model="foodType" id="type">
+                <option value="fastFood">Fast Food</option>
+                <option value="egyption">Egyption</option>
+                <option value="italian">Italian</option>
+                <option value="chinese">Chinese</option>
+                <option value="others">Others</option>
+              </select>
+              <span class="input-group-text">?</span>
+            </div>
+
+            <!-- phone-number -->
+            <label class="form-label mt-2" for="number">Phone number:</label>
+            <div class="input-group">
+              <span class="input-group-text"
+                ><i class="bi bi-telephone"></i
+              ></span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="e.g. 01111111111"
+                id="number"
+                v-model="phoneNumber"
+              />
+              <span class="input-group-text">?</span>
+            </div>
+
+            <!-- Operating-Hours  -->
+            <label class="form-label mt-2">Operating Hours:</label>
+            <div class="d-flex justify-content-around">
+              <div class="form-floating">
+                <input
+                  type="time"
+                  class="form-control"
+                  placeholder="From"
+                  v-model="opHoursFrom"
+                />
+                <label for="">From</label>
+              </div>
+              <div class="form-floating">
+                <input
+                  type="time"
+                  class="form-control"
+                  placeholder="To"
+                  v-model="opHoursTo"
+                />
+                <label for="">To</label>
+              </div>
+            </div>
+
+            <!-- Delivery fees -->
+            <label class="form-label mt-2" for="delivery-fees"
+              >Delivery fees:</label
+            >
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-cash"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="e.g. 15L.E"
+                id="delivery-fees"
+                v-model="deliveryFees"
+              />
+              <span class="input-group-text">L.E</span>
+            </div>
+
+            <!-- terms and conditions -->
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="flexCheckChecked"
+                v-model="terms"
+              />
+              <label class="form-check-label" for="flexCheckChecked">
+                <span>Terms and conditions</span>
+              </label>
+            </div>
+            <button class="btn btn-success mt-4" v-if="!isPending">
+              Create Shop
+            </button>
+            <button
+              class="btn btn-success mt-3 me-2"
+              type="button"
+              v-if="isPending"
+              disabled
+            >
+              <span
+                class="spinner-border spinner-border-sm"
+                aria-hidden="true"
+              ></span>
+              <span role="status">Loading...</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Demo -->
+        <div class="col-lg-5" v-if="showPreview()">
+          <h3>See how will your shop look like!</h3>
           <div class="card shadow" style="width: 18rem">
             <img
               src="@/assets/6306486.jpg"
@@ -185,8 +185,9 @@
               </div>
             </div>
           </div>
-        </transition>
-      </div>
+        </div>
+      </transition-group>
+      <!-- ended -->
     </div>
   </div>
 </template>
@@ -274,4 +275,27 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style>
+.move-items-enter-from,
+.move-items-leave-to {
+  opacity: 0;
+  transform: scale(0.6);
+}
+.move-items-enter-to,
+.move-items-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+.move-items-enter-active {
+  transition: all 0.3s ease;
+}
+
+.move-items-leave-active {
+  position: absolute;
+  z-index: -1;
+}
+
+.move-items-move {
+  transition: all 0.3s ease;
+}
+</style>
